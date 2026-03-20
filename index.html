@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#7ddfca" />
+  <title>Gym-Trainingsapp</title>
+  <style>
+    :root {
+      --mint: #7ddfca;
+      --mint-dark: #31b59b;
+      --mint-soft: #effcf8;
+      --bg: #f7faf9;
+      --card: #ffffff;
+      --text: #111111;
+      --muted: #606b67;
+      --line: #dbe7e2;
+      --shadow: 0 10px 30px rgba(17, 17, 17, 0.08);
+      --radius: 22px;
+      --danger: #ff6b6b;
+      --ok: #27ae60;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #f8fffd 0%, #f3f8f7 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100%;
+    }
+
+    body {
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, 900px);
+      margin: 0 auto;
+      padding: 18px 14px 80px;
+    }
+
+    h1, h2, h3, h4, p {
+      margin: 0;
+    }
+
+    .subtle {
+      color: var(--muted);
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid rgba(17,17,17,0.05);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .header {
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .brand-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, var(--mint), #bff3e6);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .hero {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      background: linear-gradient(145deg, rgba(125,223,202,0.28), rgba(255,255,255,0.95));
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill-row, .meta-row, .actions, .stack-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill, .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(17,17,17,0.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .meta-pill {
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .view {
+      display: none;
+      gap: 14px;
+    }
+
+    .view.active {
+      display: grid;
+    }
+
+    .day-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .day-card {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(17,17,17,0.05);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfffe 100%);
+      box-shadow: var(--shadow);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .day-card:active,
+    .mini-btn:active,
+    .btn:active,
+    .back-btn:active,
+    .check-btn:active {
+      transform: scale(0.99);
+    }
+
+    .day-card.active-session {
+      border-color: rgba(49,181,155,0.45);
+      box-shadow: 0 14px 32px rgba(49,181,155,0.18);
+    }
+
+    .day-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .day-chip {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--mint-soft);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .mini-note {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .history-list, .session-note-list, .settings-day-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item {
+      display: grid;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(17,17,17,0.05);
+      background: #fbfefe;
+    }
+
+    .history-empty, .empty-state {
+      padding: 14px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .section-card {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .btn, .mini-btn {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #111111;
+      color: #ffffff;
+      box-shadow: var(--shadow);
+    }
+
+    .mini-btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      box-shadow: none;
+    }
+
+    .btn.secondary, .mini-btn.secondary {
+      background: #ffffff;
+      color: #111111;
+      border: 1px solid rgba(17,17,17,0.08);
+      box-shadow: none;
+    }
+
+    .btn.mint, .mini-btn.mint {
+      background: linear-gradient(135deg, var(--mint-dark), var(--mint));
+      color: #07231d;
+    }
+
+    .btn.warning, .mini-btn.warning {
+      background: #ffffff;
+      color: var(--danger);
+      border: 1px solid rgba(255,107,107,0.35);
+      box-shadow: none;
+    }
+
+    .day-topbar, .settings-topbar {
+      position: sticky;
+      top: calc(env(safe-area-inset-top) + 8px);
+      z-index: 20;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      border: 1px solid rgba(17,17,17,0.05);
+      box-shadow: 0 12px 30px rgba(17,17,17,0.08);
+    }
+
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(17,17,17,0.08);
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .progress-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #edf3f1;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--mint-dark), var(--mint));
+      transition: width 0.25s ease;
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .exercise-card {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(17,17,17,0.06);
+      background: #ffffff;
+      box-shadow: var(--shadow);
+      transition: opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .exercise-card.done {
+      opacity: 0.68;
+      background: linear-gradient(180deg, #f6fbf9, #f1f5f4);
+    }
+
+    .exercise-card.done .exercise-title,
+    .exercise-card.done .prescription {
+      text-decoration: line-through;
+    }
+
+    .exercise-top {
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #e8fbf6, #f8fefd);
+      display: grid;
+      place-items: center;
+      color: #0f1513;
+      border: 1px solid rgba(17,17,17,0.05);
+    }
+
+    .exercise-title {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .prescription {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .check-wrap {
+      display: grid;
+      justify-items: end;
+      gap: 6px;
+    }
+
+    .check-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(17,17,17,0.08);
+      background: #ffffff;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .check-btn.checked {
+      background: linear-gradient(145deg, var(--mint), #c8f5e9);
+      color: #07362d;
+      border-color: rgba(49,181,155,0.4);
+    }
+
+    .last-log {
+      padding: 10px 12px;
+      background: var(--mint-soft);
+      border-radius: 16px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: #10352d;
+      border: 1px solid rgba(49,181,155,0.18);
+    }
+
+    .field-grid, .config-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    textarea, input[type="text"], select {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(17,17,17,0.08);
+      padding: 12px 14px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    input[type="text"].compact,
+    select.compact {
+      padding: 10px 12px;
+      border-radius: 14px;
+    }
+
+    textarea::placeholder, input[type="text"]::placeholder {
+      color: #98a29e;
+    }
+
+    .input-tip, .utility-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .settings-day-card, .exercise-config-card {
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(17,17,17,0.06);
+      background: #ffffff;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+    }
+
+    .exercise-config-card {
+      background: linear-gradient(180deg, #ffffff, #fbfffe);
+    }
+
+    .exercise-config-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .exercise-config-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: #fbfffe;
+      border: 1px solid rgba(17,17,17,0.05);
+      display: grid;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: calc(env(safe-area-inset-top) + 14px);
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(17,17,17,0.94);
+      color: #ffffff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 50;
+      max-width: calc(100% - 24px);
+      text-align: center;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.22);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 800;
+      list-style: none;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .warmup-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .warmup-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: #fbfffe;
+      border: 1px solid rgba(17,17,17,0.05);
+    }
+
+    .footer-space {
+      height: 10px;
+    }
+
+    @media (min-width: 740px) {
+      .day-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .inline-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-badge">GYM</div>
+        <div>
+          <h1>Trainingsapp Oberkörper</h1>
+          <p class="subtle">3er-Split · mobil optimiert · lokal gespeichert</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="homeView" class="view active">
+        <div class="hero panel">
+          <div class="hero-top">
+            <div>
+              <h2>Startseite</h2>
+              <p class="subtle" id="lastSessionSummary">Noch kein Training abgeschlossen.</p>
+            </div>
+            <div class="pill">💪 Fokus: Rücken · Schultern · Brust · Arme</div>
+          </div>
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="pill-row" id="homeMeta"></div>
+          <div class="actions">
+            <button class="btn mint" id="openSettingsBtn">Plan &amp; Grundkonfiguration bearbeiten</button>
+          </div>
+        </div>
+
+        <div class="day-grid" id="dayGrid"></div>
+
+        <div class="section-card panel">
+          <div>
+            <h2>Historie</h2>
+            <p class="subtle">Die letzten Trainingseinheiten im Überblick.</p>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="section-card panel">
+          <div>
+            <h2>Extras</h2>
+            <p class="subtle">Backup, Wiederherstellung und kompletter Reset.</p>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="exportBtn">Daten exportieren</button>
+            <button class="btn secondary" id="importBtn">Daten importieren</button>
+            <button class="btn warning" id="resetAllBtn">Alles zurücksetzen</button>
+            <input type="file" id="importFile" accept="application/json" hidden />
+          </div>
+          <p class="utility-note">Hinweis: Die App speichert alles lokal im Browser auf Ihrem Handy. Für langfristige Sicherheit können Sie Ihre Daten zusätzlich als JSON-Datei exportieren.</p>
+        </div>
+      </section>
+
+      <section id="dayView" class="view">
+        <div class="day-topbar">
+          <div class="topbar-row">
+            <button class="back-btn" id="backBtn" aria-label="Zurück">←</button>
+            <div style="flex:1; min-width:0;">
+              <h2 id="dayTitle">Training</h2>
+              <p class="subtle" id="daySubtitle"></p>
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <div class="topbar-row">
+              <strong id="progressText">0 / 0 Übungen erledigt</strong>
+              <span class="subtle" id="sessionStateLabel">Session aktiv</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          </div>
+          <div class="actions">
+            <button class="btn mint" id="completeSessionBtn">Training abschließen</button>
+            <button class="btn secondary" id="newSessionBtn">Neue Session starten</button>
+            <button class="btn warning" id="resetDayBtn">Heute zurücksetzen</button>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <details open>
+            <summary>Warm-up &amp; Erinnerung</summary>
+            <div class="warmup-list">
+              <div class="warmup-item"><span>•</span><span>5–8 Minuten locker Cardio oder Rudern.</span></div>
+              <div class="warmup-item"><span>•</span><span>1–2 Aufwärmsätze bei der ersten Grundübung.</span></div>
+              <div class="warmup-item"><span>•</span><span>Bei Grundübungen 2–3 Minuten Pause, bei Isolationsübungen 60–90 Sekunden.</span></div>
+              <div class="warmup-item"><span>•</span><span>Trainieren Sie meist mit 1–2 Wiederholungen im Tank.</span></div>
+            </div>
+          </details>
+        </div>
+
+        <div class="exercise-list" id="exerciseList"></div>
+        <div class="footer-space"></div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="settings-topbar">
+          <div class="topbar-row">
+            <button class="back-btn" id="settingsBackBtn" aria-label="Zurück">←</button>
+            <div style="flex:1; min-width:0;">
+              <h2>Plan bearbeiten</h2>
+              <p class="subtle">Übungen, Satzempfehlungen und Hinweise werden automatisch gespeichert.</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="resetProgramBtn">Standardplan wiederherstellen</button>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <div>
+            <h2>Grundkonfiguration</h2>
+            <p class="subtle">Sie können pro Trainingstag Übungen hinzufügen, entfernen, umsortieren und Sätze bzw. Wiederholungen anpassen.</p>
+          </div>
+          <p class="utility-note">Bereits gespeicherte Gewichte bleiben erhalten, solange die Übung bestehen bleibt. Wenn Sie eine Übung löschen, wird auch ihr Verlauf für genau diese Übung entfernt.</p>
+        </div>
+
+        <div class="settings-day-list" id="settingsDayList"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DEFAULT_PROGRAM = {
+      push: {
+        title: "Tag 1 – Push",
+        short: "Push",
+        focus: "Brust · Schulter · Trizeps",
+        notes: "Brust und Schultern sauber treffen, nicht mit Schwung arbeiten.",
+        exercises: [
+          { id: "bank", name: "Bankdrücken Langhantel", sets: "3", reps: "6–8", icon: "press" },
+          { id: "schraegkh", name: "Schrägbankdrücken Kurzhanteln", sets: "3", reps: "8–10", icon: "incline" },
+          { id: "flys", name: "Kabel-Flys oder Pec Deck", sets: "2", reps: "12–15", icon: "fly" },
+          { id: "seite", name: "Seitheben", sets: "4", reps: "12–20", icon: "lateral" },
+          { id: "shpress", name: "Schulterdrücken sitzend", sets: "2", reps: "8–10", icon: "shoulderpress" },
+          { id: "pushdown", name: "Trizepsdrücken am Kabel", sets: "3", reps: "10–12", icon: "pushdown" },
+          { id: "overheadtri", name: "Überkopf-Trizepsstrecken", sets: "2", reps: "12–15", icon: "overheadtri" }
+        ]
+      },
+      pull: {
+        title: "Tag 2 – Pull",
+        short: "Pull",
+        focus: "Rücken · hintere Schulter · Bizeps",
+        notes: "Rücken zuerst mit dem Zielmuskel ziehen, nicht nur das Gewicht bewegen.",
+        exercises: [
+          { id: "latzug", name: "Klimmzüge oder Latzug", sets: "4", reps: "6–10", icon: "latpull" },
+          { id: "brustrudern", name: "Brustgestütztes Rudern", sets: "3", reps: "8–10", icon: "row" },
+          { id: "kabelrudern", name: "Kabelrudern eng", sets: "3", reps: "10–12", icon: "row" },
+          { id: "pullover", name: "Straight-Arm Pulldown / Kabel-Pullover", sets: "2", reps: "12–15", icon: "straightarm" },
+          { id: "reversepec", name: "Reverse Pec Deck oder Reverse Flys", sets: "4", reps: "12–20", icon: "reardelt" },
+          { id: "szcurl", name: "SZ-Curls", sets: "3", reps: "8–10", icon: "curl" },
+          { id: "hammercurl", name: "Hammer Curls", sets: "3", reps: "10–12", icon: "hammercurl" }
+        ]
+      },
+      upper: {
+        title: "Tag 3 – Oberkörper-Fokus",
+        short: "Oberkörper",
+        focus: "obere Brust · Rücken · Schultern · Arme",
+        notes: "Ein runder Oberkörper-Tag mit Zusatzfokus auf Breite und Arme.",
+        exercises: [
+          { id: "inclinemachine", name: "Schrägbank-Maschine oder Smith Incline Press", sets: "3", reps: "8–10", icon: "incline" },
+          { id: "tbar", name: "Rudermaschine oder T-Bar Rudern", sets: "3", reps: "8–10", icon: "row" },
+          { id: "neutralzug", name: "Neutraler Latzug", sets: "2", reps: "10–12", icon: "latpull" },
+          { id: "seit2", name: "Seitheben", sets: "4", reps: "12–20", icon: "lateral" },
+          { id: "facepull", name: "Face Pulls oder Reverse Flys", sets: "3", reps: "12–20", icon: "reardelt" },
+          { id: "brustpresse", name: "Brustpresse oder Dips-Maschine", sets: "2", reps: "10–12", icon: "dips" },
+          { id: "kabelcurl", name: "Kabelcurls", sets: "3", reps: "10–15", icon: "curl" },
+          { id: "ropepush", name: "Rope Pushdowns", sets: "3", reps: "10–15", icon: "pushdown" }
+        ]
+      }
+    };
+
+    const DAY_ORDER = ["push", "pull", "upper"];
+    const ICON_OPTIONS = [
+      ["press", "Drücken flach"],
+      ["incline", "Drücken schräg"],
+      ["fly", "Flys / Pec Deck"],
+      ["lateral", "Seitheben"],
+      ["shoulderpress", "Schulterdrücken"],
+      ["pushdown", "Pushdown"],
+      ["overheadtri", "Überkopf-Trizeps"],
+      ["latpull", "Latzug / Klimmzüge"],
+      ["row", "Rudern"],
+      ["straightarm", "Pullover / Straight-Arm"],
+      ["reardelt", "Hintere Schulter"],
+      ["curl", "Curl"],
+      ["hammercurl", "Hammer Curl"],
+      ["dips", "Dips / Brustpresse"]
+    ];
+
+    const STORAGE_KEY = "gymTrainingsApp_v1";
+    let PROGRAM = deepClone(DEFAULT_PROGRAM);
+
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function createDefaultExerciseState() {
+      return { done: false, draft: "", lastLog: "" };
+    }
+
+    function buildDayState(dayKey) {
+      const dayState = {
+        active: false,
+        startedAt: null,
+        lastCompletedAt: null,
+        exercises: {}
+      };
+      PROGRAM[dayKey].exercises.forEach((exercise) => {
+        dayState.exercises[exercise.id] = createDefaultExerciseState();
+      });
+      return dayState;
+    }
+
+    function createDefaultState() {
+      return {
+        selectedDay: null,
+        lastSessionDay: null,
+        history: [],
+        days: {
+          push: buildDayState("push"),
+          pull: buildDayState("pull"),
+          upper: buildDayState("upper")
+        }
+      };
+    }
+
+    function normalizeExercise(exercise, fallbackId, fallbackIcon) {
+      return {
+        id: String(exercise && exercise.id ? exercise.id : fallbackId),
+        name: String(exercise && exercise.name ? exercise.name : "Neue Übung"),
+        sets: String(exercise && exercise.sets ? exercise.sets : "3"),
+        reps: String(exercise && exercise.reps ? exercise.reps : "8–12"),
+        icon: ICON_OPTIONS.some(([key]) => key === (exercise && exercise.icon)) ? exercise.icon : fallbackIcon
+      };
+    }
+
+    function normalizeProgram(rawProgram) {
+      const base = deepClone(DEFAULT_PROGRAM);
+      const output = {};
+
+      DAY_ORDER.forEach((dayKey) => {
+        const rawDay = rawProgram && rawProgram[dayKey] ? rawProgram[dayKey] : base[dayKey];
+        const defaultDay = base[dayKey];
+        const exercises = Array.isArray(rawDay.exercises) ? rawDay.exercises : defaultDay.exercises;
+        output[dayKey] = {
+          title: String(rawDay.title || defaultDay.title),
+          short: String(rawDay.short || defaultDay.short),
+          focus: String(rawDay.focus || defaultDay.focus),
+          notes: String(rawDay.notes || defaultDay.notes),
+          exercises: exercises.map((exercise, index) => normalizeExercise(exercise, `${dayKey}_${index + 1}`, defaultDay.exercises[0]?.icon || "press"))
+        };
+      });
+
+      return output;
+    }
+
+    function mergeState(raw) {
+      PROGRAM = normalizeProgram(raw && raw.program ? raw.program : DEFAULT_PROGRAM);
+      const base = createDefaultState();
+      if (!raw || typeof raw !== "object") return base;
+
+      base.selectedDay = DAY_ORDER.includes(raw.selectedDay) ? raw.selectedDay : null;
+      base.lastSessionDay = DAY_ORDER.includes(raw.lastSessionDay) ? raw.lastSessionDay : null;
+      base.history = Array.isArray(raw.history) ? raw.history.slice(0, 30) : [];
+
+      DAY_ORDER.forEach((dayKey) => {
+        const savedDay = raw.days && raw.days[dayKey] ? raw.days[dayKey] : {};
+        base.days[dayKey].active = !!savedDay.active;
+        base.days[dayKey].startedAt = savedDay.startedAt || null;
+        base.days[dayKey].lastCompletedAt = savedDay.lastCompletedAt || null;
+        const savedExercises = savedDay.exercises || {};
+
+        PROGRAM[dayKey].exercises.forEach((exercise) => {
+          const savedExercise = savedExercises[exercise.id] || {};
+          base.days[dayKey].exercises[exercise.id] = {
+            done: !!savedExercise.done,
+            draft: typeof savedExercise.draft === "string" ? savedExercise.draft : "",
+            lastLog: typeof savedExercise.lastLog === "string" ? savedExercise.lastLog : ""
+          };
+        });
+      });
+
+      return base;
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return mergeState(raw ? JSON.parse(raw) : null);
+      } catch (error) {
+        PROGRAM = deepClone(DEFAULT_PROGRAM);
+        return createDefaultState();
+      }
+    }
+
+    let state = loadState();
+
+    const homeView = document.getElementById("homeView");
+    const dayView = document.getElementById("dayView");
+    const settingsView = document.getElementById("settingsView");
+    const dayGrid = document.getElementById("dayGrid");
+    const historyList = document.getElementById("historyList");
+    const lastSessionSummary = document.getElementById("lastSessionSummary");
+    const statsGrid = document.getElementById("statsGrid");
+    const homeMeta = document.getElementById("homeMeta");
+    const dayTitle = document.getElementById("dayTitle");
+    const daySubtitle = document.getElementById("daySubtitle");
+    const exerciseList = document.getElementById("exerciseList");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    const sessionStateLabel = document.getElementById("sessionStateLabel");
+    const toast = document.getElementById("toast");
+    const settingsDayList = document.getElementById("settingsDayList");
+
+    function persistState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, program: PROGRAM }));
+    }
+
+    function saveState(silent = false) {
+      try {
+        persistState();
+      } catch (error) {
+        if (!silent) showToast("Speichern im Browser ist gerade nicht verfügbar.");
+      }
+    }
+
+    function reconcileStateWithProgram() {
+      const nextDays = {};
+
+      DAY_ORDER.forEach((dayKey) => {
+        const currentDay = state.days[dayKey] || {};
+        nextDays[dayKey] = {
+          active: !!currentDay.active,
+          startedAt: currentDay.startedAt || null,
+          lastCompletedAt: currentDay.lastCompletedAt || null,
+          exercises: {}
+        };
+
+        PROGRAM[dayKey].exercises.forEach((exercise) => {
+          const previous = currentDay.exercises && currentDay.exercises[exercise.id] ? currentDay.exercises[exercise.id] : null;
+          nextDays[dayKey].exercises[exercise.id] = previous
+            ? {
+                done: !!previous.done,
+                draft: typeof previous.draft === "string" ? previous.draft : "",
+                lastLog: typeof previous.lastLog === "string" ? previous.lastLog : ""
+              }
+            : createDefaultExerciseState();
+        });
+      });
+
+      state.days = nextDays;
+      if (state.selectedDay && !DAY_ORDER.includes(state.selectedDay)) state.selectedDay = null;
+      saveState(true);
+    }
+
+    function formatDate(iso) {
+      if (!iso) return "Noch nie";
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return "Noch nie";
+      return new Intl.DateTimeFormat("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function switchView(viewName) {
+      homeView.classList.remove("active");
+      dayView.classList.remove("active");
+      settingsView.classList.remove("active");
+      if (viewName === "home") homeView.classList.add("active");
+      if (viewName === "day") dayView.classList.add("active");
+      if (viewName === "settings") settingsView.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getProgramDay(dayKey) {
+      return PROGRAM[dayKey];
+    }
+
+    function getLastSession() {
+      return state.history.length ? state.history[0] : null;
+    }
+
+    function getOpenSessionsCount() {
+      return DAY_ORDER.filter((dayKey) => state.days[dayKey].active).length;
+    }
+
+    function getExerciseCompletion(dayKey) {
+      const day = getProgramDay(dayKey);
+      const saved = state.days[dayKey];
+      const total = day.exercises.length;
+      let done = 0;
+      day.exercises.forEach((exercise) => {
+        if (saved.exercises[exercise.id] && saved.exercises[exercise.id].done) done += 1;
+      });
+      return { done, total };
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function ensureSession(dayKey) {
+      const saved = state.days[dayKey];
+      if (saved.active) return;
+      saved.active = true;
+      saved.startedAt = new Date().toISOString();
+      getProgramDay(dayKey).exercises.forEach((exercise) => {
+        const entry = saved.exercises[exercise.id] || (saved.exercises[exercise.id] = createDefaultExerciseState());
+        entry.done = false;
+        entry.draft = entry.lastLog || "";
+      });
+      saveState(true);
+    }
+
+    function openDay(dayKey) {
+      ensureSession(dayKey);
+      state.selectedDay = dayKey;
+      saveState(true);
+      renderDayView();
+      switchView("day");
+    }
+
+    function backToHome() {
+      state.selectedDay = null;
+      saveState(true);
+      renderHome();
+      switchView("home");
+    }
+
+    function openSettings() {
+      renderSettings();
+      switchView("settings");
+    }
+
+    function resetToday(dayKey) {
+      const saved = state.days[dayKey];
+      ensureSession(dayKey);
+      getProgramDay(dayKey).exercises.forEach((exercise) => {
+        saved.exercises[exercise.id].done = false;
+        saved.exercises[exercise.id].draft = saved.exercises[exercise.id].lastLog || "";
+      });
+      saveState();
+      renderDayView();
+      showToast("Heutige Session zurückgesetzt.");
+    }
+
+    function startFreshSession(dayKey) {
+      const saved = state.days[dayKey];
+      saved.active = true;
+      saved.startedAt = new Date().toISOString();
+      getProgramDay(dayKey).exercises.forEach((exercise) => {
+        saved.exercises[exercise.id].done = false;
+        saved.exercises[exercise.id].draft = saved.exercises[exercise.id].lastLog || "";
+      });
+      saveState();
+      renderDayView();
+      showToast("Neue Session gestartet.");
+    }
+
+    function completeSession(dayKey) {
+      const saved = state.days[dayKey];
+      const now = new Date().toISOString();
+      let filledCount = 0;
+      let doneCount = 0;
+      const totalCount = getProgramDay(dayKey).exercises.length;
+
+      getProgramDay(dayKey).exercises.forEach((exercise) => {
+        const entry = saved.exercises[exercise.id];
+        if (entry.draft.trim()) {
+          entry.lastLog = entry.draft.trim();
+          filledCount += 1;
+        }
+        if (entry.done) doneCount += 1;
+      });
+
+      saved.active = false;
+      saved.lastCompletedAt = now;
+      state.lastSessionDay = dayKey;
+      state.history.unshift({
+        dayKey,
+        timestamp: now,
+        doneCount,
+        totalCount,
+        filledCount
+      });
+      state.history = state.history.slice(0, 30);
+      state.selectedDay = null;
+      saveState();
+      renderHome();
+      switchView("home");
+      showToast("Training abgeschlossen und gespeichert.");
+    }
+
+    function updateExerciseDraft(dayKey, exerciseId, value) {
+      state.days[dayKey].exercises[exerciseId].draft = value;
+      saveState(true);
+      renderDayHeaderOnly();
+    }
+
+    function toggleExercise(dayKey, exerciseId) {
+      const entry = state.days[dayKey].exercises[exerciseId];
+      entry.done = !entry.done;
+      saveState(true);
+      renderDayView();
+    }
+
+    function renderStats() {
+      const totalSessions = state.history.length;
+      const openSessions = getOpenSessionsCount();
+      const last = getLastSession();
+      const distinctDaysDone = DAY_ORDER.filter((dayKey) => state.days[dayKey].lastCompletedAt).length;
+      statsGrid.innerHTML = `
+        <div class="stat-card"><div class="subtle">Abgeschlossene Sessions</div><div class="stat-value">${totalSessions}</div></div>
+        <div class="stat-card"><div class="subtle">Offene Sessions</div><div class="stat-value">${openSessions}</div></div>
+        <div class="stat-card"><div class="subtle">Trainings-Tage genutzt</div><div class="stat-value">${distinctDaysDone} / 3</div></div>
+        <div class="stat-card"><div class="subtle">Zuletzt</div><div class="stat-value">${last ? escapeHtml(getProgramDay(last.dayKey).short) : "—"}</div></div>
+      `;
+
+      homeMeta.innerHTML = "";
+      const metaItems = [];
+      if (last) metaItems.push(`Zuletzt trainiert: ${getProgramDay(last.dayKey).title} am ${formatDate(last.timestamp)}`);
+      if (!last) metaItems.push("Starten Sie mit einem Tag und speichern Sie Ihre Gewichte direkt im Training.");
+      if (openSessions > 0) metaItems.push(`${openSessions} offene Session${openSessions > 1 ? "s" : ""} können direkt fortgesetzt werden.`);
+      metaItems.forEach((text) => {
+        const span = document.createElement("div");
+        span.className = "meta-pill";
+        span.textContent = text;
+        homeMeta.appendChild(span);
+      });
+    }
+
+    function renderHome() {
+      const last = getLastSession();
+      lastSessionSummary.textContent = last
+        ? `${getProgramDay(last.dayKey).title} zuletzt am ${formatDate(last.timestamp)}.`
+        : "Noch kein Training abgeschlossen.";
+
+      renderStats();
+
+      dayGrid.innerHTML = DAY_ORDER.map((dayKey, index) => {
+        const day = getProgramDay(dayKey);
+        const saved = state.days[dayKey];
+        const completion = getExerciseCompletion(dayKey);
+        const lastCompleted = saved.lastCompletedAt ? formatDate(saved.lastCompletedAt) : "Noch kein Eintrag";
+        return `
+          <button class="day-card ${saved.active ? "active-session" : ""}" data-day="${dayKey}">
+            <div class="day-head">
+              <div class="day-chip">${index + 1}</div>
+              <div class="pill">${saved.active ? "Session offen" : "Bereit"}</div>
+            </div>
+            <div>
+              <h3>${escapeHtml(day.title)}</h3>
+              <p class="mini-note">${escapeHtml(day.focus)}</p>
+            </div>
+            <div class="session-note-list">
+              <div class="mini-note">Zuletzt: ${lastCompleted}</div>
+              <div class="mini-note">Heute erledigt: ${completion.done} / ${completion.total}</div>
+              <div class="mini-note">${escapeHtml(day.notes)}</div>
+            </div>
+          </button>
+        `;
+      }).join("");
+
+      historyList.innerHTML = state.history.length
+        ? state.history.slice(0, 8).map((entry) => `
+            <div class="history-item">
+              <strong>${escapeHtml(getProgramDay(entry.dayKey).title)}</strong>
+              <div class="mini-note">${formatDate(entry.timestamp)}</div>
+              <div class="mini-note">Abgehakt: ${entry.doneCount} / ${entry.totalCount} · mit Eintrag: ${entry.filledCount} / ${entry.totalCount}</div>
+            </div>
+          `).join("")
+        : '<div class="history-empty">Sobald Sie eine Session abschließen, erscheint sie hier automatisch.</div>';
+
+      document.querySelectorAll(".day-card").forEach((button) => {
+        button.addEventListener("click", () => openDay(button.dataset.day));
+      });
+    }
+
+    function renderDayHeaderOnly() {
+      if (!state.selectedDay) return;
+      const dayKey = state.selectedDay;
+      const day = getProgramDay(dayKey);
+      const saved = state.days[dayKey];
+      const completion = getExerciseCompletion(dayKey);
+      const percent = completion.total ? Math.round((completion.done / completion.total) * 100) : 0;
+
+      dayTitle.textContent = day.title;
+      daySubtitle.textContent = `${day.focus} · zuletzt: ${saved.lastCompletedAt ? formatDate(saved.lastCompletedAt) : "noch nie"}`;
+      progressText.textContent = `${completion.done} / ${completion.total} Übungen erledigt`;
+      progressFill.style.width = `${percent}%`;
+      sessionStateLabel.textContent = saved.active ? `Session aktiv seit ${formatDate(saved.startedAt)}` : `Abgeschlossen am ${formatDate(saved.lastCompletedAt)}`;
+    }
+
+    function renderDayView() {
+      if (!state.selectedDay) return;
+      const dayKey = state.selectedDay;
+      const day = getProgramDay(dayKey);
+      const saved = state.days[dayKey];
+      renderDayHeaderOnly();
+
+      if (!day.exercises.length) {
+        exerciseList.innerHTML = '<div class="empty-state">Für diesen Tag sind aktuell keine Übungen hinterlegt. Öffnen Sie die Grundkonfiguration und fügen Sie Übungen hinzu.</div>';
+        return;
+      }
+
+      exerciseList.innerHTML = day.exercises.map((exercise) => {
+        const entry = saved.exercises[exercise.id] || createDefaultExerciseState();
+        return `
+          <article class="exercise-card ${entry.done ? "done" : ""}">
+            <div class="exercise-top">
+              <div class="icon-wrap">${getIcon(exercise.icon)}</div>
+              <div>
+                <div class="exercise-title">${escapeHtml(exercise.name)}</div>
+                <div class="prescription">Empfehlung: ${escapeHtml(exercise.sets)} Sätze × ${escapeHtml(exercise.reps)} Wdh.</div>
+              </div>
+              <div class="check-wrap">
+                <button class="check-btn ${entry.done ? "checked" : ""}" data-action="toggle" data-exercise="${exercise.id}" aria-label="Übung abhaken">${entry.done ? "✓" : "○"}</button>
+                <div class="mini-note">abhaken</div>
+              </div>
+            </div>
+            <div class="last-log"><strong>Letztes Mal:</strong> ${entry.lastLog ? escapeHtml(entry.lastLog) : "Noch kein Eintrag gespeichert."}</div>
+            <div class="field-grid">
+              <label>
+                Heutiger Eintrag
+                <textarea data-action="draft" data-exercise="${exercise.id}" placeholder="z. B. 60 kg · 8 / 8 / 7">${escapeHtml(entry.draft)}</textarea>
+              </label>
+              <div class="input-tip">Das Feld wird automatisch gespeichert. Beim nächsten Mal sehen Sie Ihren letzten Eintrag wieder und können mindestens dasselbe Gewicht anpeilen.</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll('[data-action="toggle"]').forEach((button) => {
+        button.addEventListener("click", () => toggleExercise(dayKey, button.dataset.exercise));
+      });
+
+      document.querySelectorAll('[data-action="draft"]').forEach((field) => {
+        field.addEventListener("input", (event) => updateExerciseDraft(dayKey, field.dataset.exercise, event.target.value));
+      });
+    }
+
+    function generateExerciseId(dayKey) {
+      return `${dayKey}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    }
+
+    function addExercise(dayKey) {
+      const defaultIcon = dayKey === "pull" ? "row" : dayKey === "upper" ? "latpull" : "press";
+      PROGRAM[dayKey].exercises.push({
+        id: generateExerciseId(dayKey),
+        name: "Neue Übung",
+        sets: "3",
+        reps: "8–12",
+        icon: defaultIcon
+      });
+      reconcileStateWithProgram();
+      renderSettings();
+      renderHome();
+      showToast("Übung hinzugefügt.");
+    }
+
+    function removeExercise(dayKey, exerciseId) {
+      PROGRAM[dayKey].exercises = PROGRAM[dayKey].exercises.filter((exercise) => exercise.id !== exerciseId);
+      reconcileStateWithProgram();
+      renderSettings();
+      renderHome();
+      if (state.selectedDay === dayKey && dayView.classList.contains("active")) renderDayView();
+      showToast("Übung entfernt.");
+    }
+
+    function moveExercise(dayKey, exerciseId, direction) {
+      const exercises = PROGRAM[dayKey].exercises;
+      const index = exercises.findIndex((exercise) => exercise.id === exerciseId);
+      if (index === -1) return;
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= exercises.length) return;
+      const [item] = exercises.splice(index, 1);
+      exercises.splice(targetIndex, 0, item);
+      reconcileStateWithProgram();
+      renderSettings();
+      renderHome();
+      if (state.selectedDay === dayKey && dayView.classList.contains("active")) renderDayView();
+    }
+
+    function updateDayMeta(dayKey, field, value) {
+      PROGRAM[dayKey][field] = value;
+      saveState(true);
+      renderHome();
+      if (state.selectedDay === dayKey && dayView.classList.contains("active")) renderDayHeaderOnly();
+    }
+
+    function updateExerciseConfig(dayKey, exerciseId, field, value) {
+      const exercise = PROGRAM[dayKey].exercises.find((item) => item.id === exerciseId);
+      if (!exercise) return;
+      exercise[field] = value;
+      saveState(true);
+      renderHome();
+      if (state.selectedDay === dayKey && dayView.classList.contains("active")) renderDayView();
+    }
+
+    function resetProgramToDefault() {
+      PROGRAM = deepClone(DEFAULT_PROGRAM);
+      reconcileStateWithProgram();
+      renderSettings();
+      renderHome();
+      if (dayView.classList.contains("active") && state.selectedDay) renderDayView();
+      showToast("Standardplan wiederhergestellt.");
+    }
+
+    function renderSettings() {
+      settingsDayList.innerHTML = DAY_ORDER.map((dayKey) => {
+        const day = getProgramDay(dayKey);
+        return `
+          <div class="settings-day-card">
+            <div>
+              <h3>${escapeHtml(day.title)}</h3>
+              <p class="mini-note">${escapeHtml(day.short)} · ${escapeHtml(day.focus)}</p>
+            </div>
+            <div class="config-grid">
+              <label>
+                Fokuszeile
+                <input class="compact" type="text" data-setting="day-meta" data-day="${dayKey}" data-field="focus" value="${escapeHtml(day.focus)}" />
+              </label>
+              <label>
+                Hinweistext auf der Startseite
+                <textarea data-setting="day-meta" data-day="${dayKey}" data-field="notes">${escapeHtml(day.notes)}</textarea>
+              </label>
+            </div>
+            <div class="stack-actions">
+              <button class="mini-btn mint" data-setting="add-exercise" data-day="${dayKey}">Übung hinzufügen</button>
+            </div>
+            <div class="config-grid">
+              ${day.exercises.length ? day.exercises.map((exercise, index) => `
+                <div class="exercise-config-card">
+                  <div class="exercise-config-head">
+                    <strong>${index + 1}. ${escapeHtml(exercise.name)}</strong>
+                    <div class="exercise-config-actions">
+                      <button class="mini-btn secondary" data-setting="move" data-day="${dayKey}" data-exercise="${exercise.id}" data-direction="up">↑</button>
+                      <button class="mini-btn secondary" data-setting="move" data-day="${dayKey}" data-exercise="${exercise.id}" data-direction="down">↓</button>
+                      <button class="mini-btn warning" data-setting="remove-exercise" data-day="${dayKey}" data-exercise="${exercise.id}">Entfernen</button>
+                    </div>
+                  </div>
+                  <div class="config-grid">
+                    <label>
+                      Übungsname
+                      <input class="compact" type="text" data-setting="exercise-field" data-day="${dayKey}" data-exercise="${exercise.id}" data-field="name" value="${escapeHtml(exercise.name)}" />
+                    </label>
+                    <div class="inline-grid">
+                      <label>
+                        Sätze
+                        <input class="compact" type="text" data-setting="exercise-field" data-day="${dayKey}" data-exercise="${exercise.id}" data-field="sets" value="${escapeHtml(exercise.sets)}" />
+                      </label>
+                      <label>
+                        Wiederholungen
+                        <input class="compact" type="text" data-setting="exercise-field" data-day="${dayKey}" data-exercise="${exercise.id}" data-field="reps" value="${escapeHtml(exercise.reps)}" />
+                      </label>
+                      <label style="grid-column: span 2;">
+                        Icon / Übungstyp
+                        <select class="compact" data-setting="exercise-field" data-day="${dayKey}" data-exercise="${exercise.id}" data-field="icon">
+                          ${ICON_OPTIONS.map(([iconKey, label]) => `<option value="${iconKey}" ${exercise.icon === iconKey ? "selected" : ""}>${escapeHtml(label)}</option>`).join("")}
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              `).join("") : '<div class="empty-state">Hier sind noch keine Übungen hinterlegt.</div>'}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.querySelectorAll('[data-setting="day-meta"]').forEach((input) => {
+        input.addEventListener("input", (event) => {
+          updateDayMeta(input.dataset.day, input.dataset.field, event.target.value);
+        });
+      });
+
+      document.querySelectorAll('[data-setting="exercise-field"]').forEach((input) => {
+        input.addEventListener("input", (event) => {
+          updateExerciseConfig(input.dataset.day, input.dataset.exercise, input.dataset.field, event.target.value);
+        });
+        input.addEventListener("change", (event) => {
+          updateExerciseConfig(input.dataset.day, input.dataset.exercise, input.dataset.field, event.target.value);
+        });
+      });
+
+      document.querySelectorAll('[data-setting="add-exercise"]').forEach((button) => {
+        button.addEventListener("click", () => addExercise(button.dataset.day));
+      });
+
+      document.querySelectorAll('[data-setting="remove-exercise"]').forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!confirm("Diese Übung inklusive ihres gespeicherten Verlaufs entfernen?")) return;
+          removeExercise(button.dataset.day, button.dataset.exercise);
+        });
+      });
+
+      document.querySelectorAll('[data-setting="move"]').forEach((button) => {
+        button.addEventListener("click", () => moveExercise(button.dataset.day, button.dataset.exercise, button.dataset.direction));
+      });
+    }
+
+    function getIcon(type) {
+      const icons = {
+        press: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M8 18h8M48 18h8M14 18h36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M20 25l8 8m16-8l-8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 35h18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18 46h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M20 35v11m24-11v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        incline: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 19h8M46 19h8M16 19h30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M20 40l18-12 9 14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 44h26" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18 44l-3 8M41 44l3 8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        fly: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="14" r="5" stroke="currentColor" stroke-width="3"/><path d="M32 19v14m0 0l-14 10m14-10l14 10M18 25l14 8 14-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 51l5-10 5 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        lateral: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="13" r="5" stroke="currentColor" stroke-width="3"/><path d="M32 18v16m0 0l-16-6m16 6l16-6M22 28l-7 2m34-2l-7 2M27 52l5-9 5 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        shoulderpress: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M18 46h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M24 46V33h16v13" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="20" r="5" stroke="currentColor" stroke-width="3"/><path d="M25 25l-7 9m21-9l7 9M18 12h8m12 0h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        pushdown: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M48 10v44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M20 14h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="20" r="5" stroke="currentColor" stroke-width="3"/><path d="M24 25v12m0 0l-9 7m9-7l9 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 18v14m0 0l-4 5m4-5l4 5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        overheadtri: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="28" cy="14" r="5" stroke="currentColor" stroke-width="3"/><path d="M28 19v14m0 0l14-8m-14 8l-8 11m8-11l8 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 9h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        latpull: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M16 12h32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M32 12v10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M22 22l10 10 10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="36" r="5" stroke="currentColor" stroke-width="3"/><path d="M32 41v11m0-11l-10 7m10-7l10 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        row: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M12 48h40" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 44l12-12 10 8 10-12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="25" r="5" stroke="currentColor" stroke-width="3"/><path d="M20 30l8 2m10 8l8 4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        straightarm: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M46 8v20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M22 14h24" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="22" r="5" stroke="currentColor" stroke-width="3"/><path d="M24 27v12m0 0l12-1m-12 1l-7 9m7-9l10 11" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 18v15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+        reardelt: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="14" r="5" stroke="currentColor" stroke-width="3"/><path d="M32 19l-8 10m8-10l8 10M24 29l-10 8m28-8l10 8M28 53l4-12 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 24h24" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.55"/></svg>`,
+        curl: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="28" cy="13" r="5" stroke="currentColor" stroke-width="3"/><path d="M28 18v14m0 0l-8 8m8-8l12 4M40 36l8-2m-20 18l4-12 8 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        hammercurl: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="28" cy="13" r="5" stroke="currentColor" stroke-width="3"/><path d="M28 18v14m0 0l8 8m-8-8l12 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 34v10m-4-10h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M28 52l4-12 8 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        dips: `<svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M18 18v28M46 18v28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="16" r="5" stroke="currentColor" stroke-width="3"/><path d="M32 21v12m0 0l-9 7m9-7l9 7M23 33h18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      };
+      return icons[type] || icons.press;
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify({ ...state, program: PROGRAM }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gym-trainingsapp-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Backup exportiert.");
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          state = mergeState(parsed);
+          saveState(true);
+          renderHome();
+          renderSettings();
+          if (state.selectedDay) {
+            renderDayView();
+            switchView("day");
+          } else {
+            switchView("home");
+          }
+          showToast("Backup importiert.");
+        } catch (error) {
+          showToast("Import fehlgeschlagen.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    document.getElementById("backBtn").addEventListener("click", backToHome);
+    document.getElementById("settingsBackBtn").addEventListener("click", backToHome);
+    document.getElementById("openSettingsBtn").addEventListener("click", openSettings);
+    document.getElementById("completeSessionBtn").addEventListener("click", () => {
+      if (!state.selectedDay) return;
+      completeSession(state.selectedDay);
+    });
+    document.getElementById("newSessionBtn").addEventListener("click", () => {
+      if (!state.selectedDay) return;
+      startFreshSession(state.selectedDay);
+    });
+    document.getElementById("resetDayBtn").addEventListener("click", () => {
+      if (!state.selectedDay) return;
+      if (confirm("Heutige Haken und Eingaben für diesen Tag zurücksetzen? Letztes Mal bleibt erhalten.")) {
+        resetToday(state.selectedDay);
+      }
+    });
+    document.getElementById("resetProgramBtn").addEventListener("click", () => {
+      if (!confirm("Den Trainingsplan auf den Standard zurücksetzen?")) return;
+      resetProgramToDefault();
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportData);
+    document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
+    document.getElementById("importFile").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (file) importData(file);
+      event.target.value = "";
+    });
+    document.getElementById("resetAllBtn").addEventListener("click", () => {
+      if (!confirm("Wirklich alle gespeicherten Trainingsdaten löschen?")) return;
+      PROGRAM = deepClone(DEFAULT_PROGRAM);
+      state = createDefaultState();
+      saveState(true);
+      renderHome();
+      renderSettings();
+      switchView("home");
+      showToast("Alle Daten zurückgesetzt.");
+    });
+
+    renderHome();
+    renderSettings();
+  </script>
+</body>
+</html>
