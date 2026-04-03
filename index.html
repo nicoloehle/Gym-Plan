@@ -694,54 +694,59 @@
 
   <script>
     const DEFAULT_PROGRAM = {
-      push: {
-        title: "Tag 1 – Push",
-        short: "Push",
-        focus: "Brust · Schulter · Trizeps",
-        notes: "Brust und Schultern sauber treffen, nicht mit Schwung arbeiten.",
-        exercises: [
-          { id: "bank", name: "Bankdrücken Langhantel", sets: "3", reps: "6–8", icon: "press" },
-          { id: "schraegkh", name: "Schrägbankdrücken Kurzhanteln", sets: "3", reps: "8–10", icon: "incline" },
-          { id: "flys", name: "Kabel-Flys oder Pec Deck", sets: "2", reps: "12–15", icon: "fly" },
-          { id: "seite", name: "Seitheben", sets: "4", reps: "12–20", icon: "lateral" },
-          { id: "shpress", name: "Schulterdrücken sitzend", sets: "2", reps: "8–10", icon: "shoulderpress" },
-          { id: "pushdown", name: "Trizepsdrücken am Kabel", sets: "3", reps: "10–12", icon: "pushdown" },
-          { id: "overheadtri", name: "Überkopf-Trizepsstrecken", sets: "2", reps: "12–15", icon: "overheadtri" }
-        ]
-      },
-      pull: {
-        title: "Tag 2 – Pull",
-        short: "Pull",
-        focus: "Rücken · hintere Schulter · Bizeps",
-        notes: "Rücken zuerst mit dem Zielmuskel ziehen, nicht nur das Gewicht bewegen.",
-        exercises: [
-          { id: "latzug", name: "Klimmzüge oder Latzug", sets: "4", reps: "6–10", icon: "latpull" },
-          { id: "brustrudern", name: "Brustgestütztes Rudern", sets: "3", reps: "8–10", icon: "row" },
-          { id: "kabelrudern", name: "Kabelrudern eng", sets: "3", reps: "10–12", icon: "row" },
-          { id: "pullover", name: "Straight-Arm Pulldown / Kabel-Pullover", sets: "2", reps: "12–15", icon: "straightarm" },
-          { id: "reversepec", name: "Reverse Pec Deck oder Reverse Flys", sets: "4", reps: "12–20", icon: "reardelt" },
-          { id: "szcurl", name: "SZ-Curls", sets: "3", reps: "8–10", icon: "curl" },
-          { id: "hammercurl", name: "Hammer Curls", sets: "3", reps: "10–12", icon: "hammercurl" }
-        ]
-      },
-      upper: {
-        title: "Tag 3 – Oberkörper-Fokus",
-        short: "Oberkörper",
-        focus: "obere Brust · Rücken · Schultern · Arme",
-        notes: "Ein runder Oberkörper-Tag mit Zusatzfokus auf Breite und Arme.",
-        exercises: [
-          { id: "inclinemachine", name: "Schrägbank-Maschine oder Smith Incline Press", sets: "3", reps: "8–10", icon: "incline" },
-          { id: "tbar", name: "Rudermaschine oder T-Bar Rudern", sets: "3", reps: "8–10", icon: "row" },
-          { id: "neutralzug", name: "Neutraler Latzug", sets: "2", reps: "10–12", icon: "latpull" },
-          { id: "seit2", name: "Seitheben", sets: "4", reps: "12–20", icon: "lateral" },
-          { id: "facepull", name: "Face Pulls oder Reverse Flys", sets: "3", reps: "12–20", icon: "reardelt" },
-          { id: "brustpresse", name: "Brustpresse oder Dips-Maschine", sets: "2", reps: "10–12", icon: "dips" },
-          { id: "kabelcurl", name: "Kabelcurls", sets: "3", reps: "10–15", icon: "curl" },
-          { id: "ropepush", name: "Rope Pushdowns", sets: "3", reps: "10–15", icon: "pushdown" }
-        ]
-      }
-    };
+  push: {
+    title: "Tag 1 – Push + Explosivität",
+    short: "Push",
+    focus: "Brust · Schulter · Trizeps · Sprungkraft",
+    notes: "Explosive Sprünge zuerst, danach kontrolliertes Push-Training.",
+    exercises: [
+      { id: "boxjump", name: "Box Jumps", sets: "3", reps: "3", icon: "dips" },
+      { id: "squatjump", name: "Squat Jumps", sets: "3", reps: "4", icon: "dips" },
+      { id: "handstand", name: "Handstand Training", sets: "5–10 Min", reps: "Skill", icon: "shoulderpress" },
+      { id: "dips", name: "Dips", sets: "4", reps: "6–10", icon: "dips" },
+      { id: "bank", name: "Bankdrücken", sets: "3", reps: "6–10", icon: "press" },
+      { id: "shoulderpress", name: "Schulterdrücken", sets: "3", reps: "6–10", icon: "shoulderpress" },
+      { id: "lateral", name: "Seitheben", sets: "3", reps: "12–15", icon: "lateral" },
+      { id: "scapula", name: "Scapula Push-Ups", sets: "2", reps: "10–15", icon: "press" },
+      { id: "overheadtri", name: "Overhead Trizeps Extension", sets: "2–3", reps: "10–15", icon: "overheadtri" }
+    ]
+  },
 
+  pull: {
+    title: "Tag 2 – Pull + Athletik",
+    short: "Pull",
+    focus: "Rücken · Bizeps · Stabilität · Explosivität",
+    notes: "Einbeinige Sprünge und Stabilität zuerst, danach Pull-Kraft.",
+    exercises: [
+      { id: "singlejump", name: "Single Leg Box Jump / Step-Up Jump", sets: "3", reps: "3 pro Bein", icon: "dips" },
+      { id: "skater", name: "Skater Jumps", sets: "3", reps: "5 pro Seite", icon: "dips" },
+      { id: "bulgarian", name: "Bulgarian Split Squats (leicht)", sets: "2", reps: "8 pro Bein", icon: "row" },
+      { id: "pullups", name: "Klimmzüge", sets: "4", reps: "6–10", icon: "latpull" },
+      { id: "row", name: "Rudern", sets: "3", reps: "6–10", icon: "row" },
+      { id: "facepull", name: "Face Pulls", sets: "3", reps: "12–15", icon: "reardelt" },
+      { id: "reversefly", name: "Reverse Flys", sets: "2", reps: "12–15", icon: "reardelt" },
+      { id: "deadhang", name: "Dead Hang", sets: "2", reps: "30–60 Sek", icon: "latpull" },
+      { id: "hammercurl", name: "Hammer Curls", sets: "2–3", reps: "10–12", icon: "hammercurl" },
+      { id: "inclinecurl", name: "Incline Dumbbell Curls", sets: "2", reps: "10–12", icon: "curl" },
+      { id: "legraise", name: "Hanging Leg Raises", sets: "3", reps: "10–15", icon: "latpull" },
+      { id: "plank", name: "Plank", sets: "2", reps: "45–60 Sek", icon: "press" }
+    ]
+  },
+
+  upper: {
+    title: "Tag 3 – Leichter Oberkörper + Core",
+    short: "Light",
+    focus: "leichte Aktivierung · Core · Skills",
+    notes: "Leichter Trainingstag, besonders geeignet vor oder nach Fußball.",
+    exercises: [
+      { id: "handstand2", name: "Handstand oder L-Sit Skill", sets: "5–10 Min", reps: "Skill", icon: "shoulderpress" },
+      { id: "pushups", name: "Liegestütze", sets: "3", reps: "10–15", icon: "press" },
+      { id: "pullups2", name: "Klimmzüge (leicht)", sets: "3", reps: "5–8", icon: "latpull" },
+      { id: "lsit", name: "L-Sit / Knee Raises", sets: "3", reps: "10–20 Sek", icon: "press" },
+      { id: "rotation", name: "Russian Twists / Rotation", sets: "3", reps: "15–20", icon: "press" }
+    ]
+  }
+};
     const DAY_ORDER = ["push", "pull", "upper"];
     const ICON_OPTIONS = [
       ["press", "Drücken flach"],
